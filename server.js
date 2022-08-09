@@ -17,12 +17,12 @@ const PORT = process.env.PORT || 3002;
 
 class Forecast {
   constructor(city) {
-    let { data } = weather.find(item => item.city_name === city);
+    let data = weather.find(item => item.city_name.toLowerCase() === city.toLowerCase());
     this.weatherData = data;
   }
 
   getWeather() {
-    return this.weatherData.map(day => ({
+    return this.weatherData.data.map(day => ({
       description: `${day.weather.description}, high of ${day.high_temp} degrees, low of ${day.low_temp} degrees.`,
       date: `${day.datetime}`
     }));
@@ -47,14 +47,13 @@ app.get('/weather', (req, res, next) => {
 
     res.send(weatherReport);
   } catch (error) {
-    next(error.message);
+    next(error);
   }
 });
 
 //Middleware error handling
 app.use((error, request, response, next) => {
-  console.log(error);
-  response.send(error);
+  response.status(500).send(error.message);
 });
 
 //Tells app which port to listen on
