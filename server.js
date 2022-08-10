@@ -29,6 +29,25 @@ class Weather {
   }
 }
 
+class Movie {
+  constructor(movieObj) {
+    this.movieData = movieObj;
+  }
+  getMovies() {
+    return this.movieData.results.map(movie => ({
+      title: `${movie.original_title}`,
+      overview: `${movie.overview}`,
+      average_votes: `${movie.vote_average}`,
+      total_votes: `${movie.vote_count}`,
+      image_url: `${movie.backdrop_path}`,
+      popularity: `${movie.popularity}`,
+      released_on: `${movie.release_date}`
+    }));
+
+  }
+
+}
+
 //Define home route
 app.get('/', (req, res) => {
   res.send('Hello from the home route');
@@ -36,6 +55,9 @@ app.get('/', (req, res) => {
 
 //Define endpoint that holds weather data
 app.get('/weather', (getApiForecast));
+
+//Define endpoint for movie data
+app.get('/movies', getApiMovies);
 
 async function getApiForecast(request, response, next) {
   //assign query parameters from front end
@@ -47,12 +69,21 @@ async function getApiForecast(request, response, next) {
   try{
     const weatherResponse = await axios.get(url);
     let weatherObj = new Weather(weatherResponse.data);
-    console.log('Weather object: ', weatherObj);
     let forecast = weatherObj.getWeather();
-    
-    console.log('Forecast: ', forecast);
     response.send(forecast);
-    
+  } catch (error) {
+    next(error);
+  }
+}
+
+async function getApiMovies(request, response, next) {
+  const city = request.query.searchQuery;
+  const url = `https://api.themoviedb.org/3/search/movie?api_key=${process.env.MOVIE_API_KEY}&query=${city}`;
+
+  try {
+    const movieResponse = await axios.get(url);
+    const movieObj = new Movie(movieResponse.data);
+    response.send(movieObj.getMovies());
   } catch (error) {
     next(error);
   }
