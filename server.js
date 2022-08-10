@@ -3,8 +3,9 @@
 const express = require('express');
 const cors = require('cors');
 const { response } = require('express');
+const axios = require('axios');
 require('dotenv').config();
-const weather = require('./data/weather.json');
+//const weather = require('./data/weather.json');
 
 //Create an instance of an Express server
 const app = express();
@@ -15,10 +16,9 @@ app.use(cors());
 //Set PORT variable to tell Express app where to serve the server
 const PORT = process.env.PORT || 3002;
 
-class Forecast {
-  constructor(city) {
-    let data = weather.find(item => item.city_name.toLowerCase() === city.toLowerCase());
-    this.weatherData = data;
+class Weather {
+  constructor(weatherObj) {
+    this.weatherData = weatherObj;
   }
 
   getWeather() {
@@ -35,21 +35,28 @@ app.get('/', (req, res) => {
 });
 
 //Define endpoint that holds weather data
-app.get('/weather', (req, res, next) => {
-  try {
-    //assign query parameters from front end
-    const searchQuery = req.query.searchQuery;
-    const lat = req.query.lat;
-    const lon = req.query.lon;
+app.get('/weather', (getApiForecast));
 
-    let currentWeather = new Forecast(searchQuery);
-    let weatherReport = currentWeather.getWeather();
+async function getApiForecast(request, response, next) {
+  //assign query parameters from front end
+  const city = request.query.searchQuery;
+  const url = `https://api.weatherbit.io/v2.0/forecast/daily?key=${process.env.WEATHER_API_KEY}&city=${city}&country=US&units=I&days=5`;
+  //const lat = request.query.lat;
+  //const lon = request.query.lon;
 
-    res.send(weatherReport);
+  try{
+    const weatherResponse = await axios.get(url);
+    let weatherObj = new Weather(weatherResponse.data);
+    console.log('Weather object: ', weatherObj);
+    let forecast = weatherObj.getWeather();
+    
+    console.log('Forecast: ', forecast);
+    response.send(forecast);
+    
   } catch (error) {
     next(error);
   }
-});
+}
 
 //Middleware error handling
 app.use((error, request, response, next) => {
