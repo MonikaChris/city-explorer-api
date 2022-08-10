@@ -39,7 +39,7 @@ class Movie {
       overview: `${movie.overview}`,
       average_votes: `${movie.vote_average}`,
       total_votes: `${movie.vote_count}`,
-      image_url: `${movie.backdrop_path}`,
+      image_url: `https://image.tmdb.org/t/p/w500${movie.poster_path}`,
       popularity: `${movie.popularity}`,
       released_on: `${movie.release_date}`
     }));
