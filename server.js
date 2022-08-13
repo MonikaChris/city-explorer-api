@@ -61,10 +61,10 @@ app.get('/movies', getApiMovies);
 
 async function getApiForecast(request, response, next) {
   //assign query parameters from front end
-  const city = request.query.searchQuery;
-  const url = `https://api.weatherbit.io/v2.0/forecast/daily?key=${process.env.WEATHER_API_KEY}&city=${city}&country=US&units=I&days=5`;
-  //const lat = request.query.lat;
-  //const lon = request.query.lon;
+  //const city = request.query.searchQuery;
+  const lat = request.query.lat;
+  const lon = request.query.lon;
+  const url = `https://api.weatherbit.io/v2.0/forecast/daily?key=${process.env.WEATHER_API_KEY}&lat=${lat}&lon=${lon}&units=I&days=5`;
 
   try{
     const weatherResponse = await axios.get(url);
