@@ -1,6 +1,7 @@
 'use strict';
 
 const axios = require('axios');
+let cache = require('./cache');
 
 class Weather {
   constructor(weatherObj) {
@@ -15,20 +16,29 @@ class Weather {
   }
 }
 
-async function getApiForecast(request, response, next) {
+async function getApiWeather(request, response, next) {
   //assign query parameters from front end
   const lat = request.query.lat;
   const lon = request.query.lon;
+  const key = 'weather' + lat + lon;
   const url = `https://api.weatherbit.io/v2.0/forecast/daily?key=${process.env.WEATHER_API_KEY}&lat=${lat}&lon=${lon}&units=I&days=5`;
 
   try {
-    const weatherResponse = await axios.get(url);
-    let weatherObj = new Weather(weatherResponse.data);
-    let forecast = weatherObj.getWeather();
-    response.send(forecast);
+    if (cache[key] && (Date.now() - cache[key].timestamp < 50000)) {
+      response.status(200).send(cache[key].data);
+    } else {
+      const weatherResponse = await axios.get(url);
+      let weatherObj = new Weather(weatherResponse.data);
+      let forecast = weatherObj.getWeather();
+
+      cache[key] = {};
+      cache[key].timestamp = Date.now();
+      cache[key].data = forecast;
+      response.status(200).send(forecast);
+    }
   } catch (error) {
     next(error);
   }
 }
 
-module.exports = getApiForecast;
+module.exports = getApiWeather;
