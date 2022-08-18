@@ -5,7 +5,7 @@ const cors = require('cors');
 const { response } = require('express');
 //const axios = require('axios');
 require('dotenv').config();
-const getApiForecast = require('./modules/weather');
+const getApiWeather = require('./modules/weather');
 const getApiMovies = require('./modules/movies');
 
 //Create an instance of an Express server
@@ -23,7 +23,7 @@ app.get('/', (req, res) => {
 });
 
 //Define endpoint that holds weather data
-app.get('/weather', getApiForecast);
+app.get('/weather', getApiWeather);
 
 //Define endpoint for movie data
 app.get('/movies', getApiMovies);

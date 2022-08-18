@@ -1,6 +1,7 @@
 'use strict';
 
 const axios = require('axios');
+let cache = require('./cache.js');
 
 class Movie {
   constructor(movieObj) {
@@ -21,12 +22,25 @@ class Movie {
 
 async function getApiMovies(request, response, next) {
   const city = request.query.searchQuery;
+  const key = 'movies' + city;
   const url = `https://api.themoviedb.org/3/search/movie?api_key=${process.env.MOVIE_API_KEY}&query=${city}`;
 
   try {
-    const movieResponse = await axios.get(url);
-    const movieObj = new Movie(movieResponse.data);
-    response.send(movieObj.getMovies());
+    if (cache[key] !== undefined && (Date.now() - cache[key].timestamp < 86400000)) {
+      console.log('Cache hit');
+      response.status(200).send(cache[key]);
+    } else {
+      console.log('Cache miss');
+      const movieResponse = await axios.get(url);
+      const movieObj = new Movie(movieResponse.data);
+      const movies = movieObj.getMovies();
+
+      cache[key] = {};
+      cache[key].timestamp = Date.now();
+      cache[key].data = movies;
+      console.log('Cache: ', cache);
+      response.send(movies);
+    }
   } catch (error) {
     next(error);
   }
