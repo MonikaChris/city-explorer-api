@@ -2,11 +2,12 @@
 
 const express = require('express');
 const cors = require('cors');
-const { response } = require('express');
+//const { response } = require('express');
 //const axios = require('axios');
 require('dotenv').config();
 const getApiWeather = require('./modules/weather');
 const getApiMovies = require('./modules/movies');
+const getApiYelp = require('./modules/yelp');
 
 //Create an instance of an Express server
 const app = express();
@@ -27,6 +28,9 @@ app.get('/weather', getApiWeather);
 
 //Define endpoint for movie data
 app.get('/movies', getApiMovies);
+
+//Define endpoint for Yelp data
+app.get('/yelp', getApiYelp);
 
 //Middleware error handling
 app.use((error, request, response, next) => {
