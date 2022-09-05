@@ -27,10 +27,10 @@ async function getApiMovies(request, response, next) {
 
   try {
     if (cache[key] !== undefined && (Date.now() - cache[key].timestamp < 86400000)) {
-      console.log('Cache hit');
+      //console.log('Cache hit');
       response.status(200).send(cache[key]);
     } else {
-      console.log('Cache miss');
+      //console.log('Cache miss');
       const movieResponse = await axios.get(url);
       const movieObj = new Movie(movieResponse.data);
       const movies = movieObj.getMovies();
@@ -38,7 +38,6 @@ async function getApiMovies(request, response, next) {
       cache[key] = {};
       cache[key].timestamp = Date.now();
       cache[key].data = movies;
-      console.log('Cache: ', cache);
       response.send(movies);
     }
   } catch (error) {
