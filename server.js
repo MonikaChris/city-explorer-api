@@ -14,7 +14,7 @@ const app = express();
 
 //Middleware - tells Express app to use cors
 app.use(cors({
-  origin: 'https://mcd-city-explorer.netlify.app/'
+  origin: 'https://mcd-city-explorer.netlify.app'
 }));
 
 
