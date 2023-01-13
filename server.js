@@ -13,11 +13,11 @@ const getApiYelp = require('./modules/yelp');
 const app = express();
 
 //Middleware - tells Express app to use cors
-app.use(cors);
+// app.use(cors);
 
-// app.use(cors({
-//   origin: 'https://mcd-city-explorer.netlify.app'
-// }));
+app.use(cors({
+  origin: 'https://mcd-city-explorer.netlify.app'
+}));
 
 
 //Set PORT variable to tell Express app where to serve the server
