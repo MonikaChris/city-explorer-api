@@ -16,7 +16,7 @@ const app = express();
 // app.use(cors);
 
 app.use(cors({
-  origin: 'https://mcd-city-explorer.netlify.app'
+  origin: ['https://mcd-city-explorer.netlify.app', 'http://localhost:3000']
 }));
 
 
